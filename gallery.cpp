@@ -1,4 +1,4 @@
-#include "Gallery.h"
+#include "gallery.h"
 #include "SDL_utils.h"
 #include <SDL_image.h>
 
@@ -31,14 +31,28 @@ SDL_Texture* Gallery::loadTexture(std::string path )
 
 void Gallery::loadGamePictures()
 {
-    pictures[PIC_BOOM] = loadTexture("IMAGE\\boom.png");
+    pictures[PIC_BOMB] = loadTexture("IMAGE\\boom.png");
+
     pictures[PIC_RECTANGLE] = loadTexture("IMAGE\\rectangle.png");
+
+    pictures[PIC_FLAG] = loadTexture("IMAGE\\flag.png");
+
+    pictures[PIC_0] = loadTexture("IMAGE\\0.png");
+
     pictures[PIC_1] = loadTexture("IMAGE\\1.png");
+
     pictures[PIC_2] = loadTexture("IMAGE\\2.png");
+
     pictures[PIC_3] = loadTexture("IMAGE\\3.png");
+
     pictures[PIC_4] = loadTexture("IMAGE\\4.png");
+
     pictures[PIC_5] = loadTexture("IMAGE\\5.png");
+
     pictures[PIC_6] = loadTexture("IMAGE\\6.png");
+
     pictures[PIC_7] = loadTexture("IMAGE\\7.png");
+
     pictures[PIC_8] = loadTexture("IMAGE\\8.png");
 }
+

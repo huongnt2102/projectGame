@@ -6,8 +6,10 @@
 #include <SDL.h>
 
 enum PictureID {
-    PIC_BOOM,
+    PIC_BOMB,
     PIC_RECTANGLE,
+    PIC_FLAG,
+    PIC_0,
     PIC_1,
     PIC_2,
     PIC_3,
@@ -19,12 +21,12 @@ enum PictureID {
     PIC_COUNT
 };
 
-class Gallery
+struct Gallery
 {
     SDL_Texture* pictures[PIC_COUNT];
     SDL_Renderer* renderer;
     SDL_Texture* loadTexture(std::string path);
-public:
+
     Gallery(SDL_Renderer* renderer_);
     ~Gallery();
 
@@ -33,3 +35,4 @@ public:
 };
 
 #endif // GALLERY_H
+
