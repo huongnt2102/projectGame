@@ -22,7 +22,7 @@ void rendererTTF(SDL_Renderer* renderer, SDL_Surface* fSurface, SDL_Texture* fTe
     SDL_Rect srcRest;
     SDL_Rect desRect;
     TTF_SizeText(font, text.c_str(), &srcRest.w, &srcRest.h);
-    srcRest.x = 0;
+    	srcRest.x = 0;
 	srcRest.y = 0;
 
 	desRect.x = left;

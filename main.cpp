@@ -23,12 +23,6 @@ const int COLUMN_SIZE = 15;
 
 const SDL_Color YELLOW = {255, 255, 0};
 
-const SDL_Color RED = {255, 0, 0};
-
-const SDL_Color WHITE = {255, 255, 255};
-
-const SDL_Color GREEN = {0, 128, 0};
-
 Gallery* gallery = nullptr; // global picture manager
 
 void playGame(SDL_Renderer* renderer, SDL_Window* window, SDL_Surface* fSurface, SDL_Texture* fTexture, TTF_Font* font, Mix_Chunk *boom);
@@ -41,7 +35,6 @@ int main(int argc, char* argv[])
     SDL_Window* window;
     SDL_Renderer* renderer;
     initSDL(window, renderer, SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE);
-
 
     Mix_Chunk *boom;
     if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
