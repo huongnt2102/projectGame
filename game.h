@@ -2,7 +2,6 @@
 #define GAME_H
 
 #include "gallery.h"
-#include "draw.h"
 
 struct level
 {

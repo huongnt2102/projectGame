@@ -4,7 +4,6 @@
 
 #include "game.h"
 #include "gallery.h"
-#include "draw.h"
 
 extern Gallery* gallery;
 
