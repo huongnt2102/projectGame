@@ -1,6 +1,6 @@
+
 #include <iostream>
 #include <SDL.h>
-
 #include "SDL_utils.h"
 
 //*****************************************************
@@ -52,3 +52,4 @@ void waitUntilKeyPressed()
         SDL_Delay(10000);
     }
 }
+

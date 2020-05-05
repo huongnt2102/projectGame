@@ -6,7 +6,7 @@
 #include <SDL.h>
 
 enum PictureID {
-    PIC_BOMB,
+    PIC_BOOM,
     PIC_RECTANGLE,
     PIC_FLAG,
     PIC_0,
@@ -35,4 +35,5 @@ struct Gallery
 };
 
 #endif // GALLERY_H
+
 

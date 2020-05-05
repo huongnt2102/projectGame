@@ -1,7 +1,9 @@
+#include <SDL.h>
 #include <SDL_image.h>
 
 #include "gallery.h"
 #include "SDL_utils.h"
+
 
 Gallery::Gallery(SDL_Renderer* renderer_)
     : renderer(renderer_)
@@ -32,7 +34,7 @@ SDL_Texture* Gallery::loadTexture(std::string path )
 
 void Gallery::loadGamePictures()
 {
-    pictures[PIC_BOMB] = loadTexture("IMAGE\\boom.png");
+    pictures[PIC_BOOM] = loadTexture("IMAGE\\boom.png");
 
     pictures[PIC_RECTANGLE] = loadTexture("IMAGE\\rectangle.png");
 
@@ -56,4 +58,5 @@ void Gallery::loadGamePictures()
 
     pictures[PIC_8] = loadTexture("IMAGE\\8.png");
 }
+
 

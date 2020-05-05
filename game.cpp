@@ -7,7 +7,7 @@
 
 extern Gallery* gallery;
 
-void drawPic(SDL_Renderer* renderer, int top, int left, SDL_Texture* texture, const int CELL_SIZE) //, Position pos
+void drawPic(SDL_Renderer* renderer, int top, int left, SDL_Texture* texture, const int CELL_SIZE)
 {
     SDL_Rect cell;
     cell.x = left * CELL_SIZE;
@@ -28,7 +28,7 @@ void drawBlocks(SDL_Renderer* renderer, level** rectangle, const int ROW_SIZE, c
     }
 }
 
-void setRandBomb(level **rectangle, const int ROW_SIZE, const int COLUMN_SIZE, int numberOfBomb)
+void setRandBoom(level **rectangle, const int ROW_SIZE, const int COLUMN_SIZE, const int numberOfBoom)
 {
     int x, y;
     int count = 0;
@@ -38,25 +38,25 @@ void setRandBomb(level **rectangle, const int ROW_SIZE, const int COLUMN_SIZE, i
         int randRect = rand() % t;
         x = randRect / COLUMN_SIZE;
         y = randRect % COLUMN_SIZE;
-        if (rectangle[x][y].isBomb == 0)
+        if (rectangle[x][y].isBoom == 0)
         {
-            rectangle[x][y].isBomb = 1;
+            rectangle[x][y].isBoom = 1;
             count++;
         } else continue;
     }
-    while(count < numberOfBomb);
+    while(count < numberOfBoom);
 }
 
-int countOne(level** rectangle, int i, int j, const int ROW_SIZE, const int COLUMN_SIZE)
+int countOne(level** rectangle, int y, int x, const int ROW_SIZE, const int COLUMN_SIZE)
 {
     int sum = 0;
-    for (int y = -1; y < 2; y++)
+    for (int i = -1; i < 2; i++)
     {
-        for (int x = -1; x < 2; x++)
+        for (int j = -1; j < 2; j++)
         {
             if ((y + i) >= 0 && (y + i) < ROW_SIZE && (x + j) >= 0 && (x + j) < COLUMN_SIZE)
             {
-                if (rectangle[i + y][j + x].isBomb == 1)
+                if (rectangle[y + i][x + j].isBoom == 1)
                 {
                     sum += 1;
                 }
@@ -89,15 +89,15 @@ void print(SDL_Renderer* renderer, level** rectangle, int y, int x, const int RO
         if (8 == sum) drawPic(renderer, y, x, gallery->getImage(PIC_8), CELL_SIZE);
 }
 
-void openEmpty(SDL_Renderer* renderer, level** rectangle, int row, int col, const int ROW_SIZE, const int COLUMN_SIZE, const int CELL_SIZE)
+void openEmpty(SDL_Renderer* renderer, level** rectangle, int y, int x, const int ROW_SIZE, const int COLUMN_SIZE, const int CELL_SIZE)
 {
-    rectangle[row][col].state = 1;
+    rectangle[y][x].state = 1;
 
-    int sum = countOne(rectangle, row, col, ROW_SIZE, COLUMN_SIZE);
+    int sum = countOne(rectangle, y, x, ROW_SIZE, COLUMN_SIZE);
 
-    if (sum == 0 && rectangle[row][col].state == 1)
+    if (sum == 0 && rectangle[y][x].state == 1)
     {
-        drawPic(renderer, row, col, gallery->getImage(PIC_0), CELL_SIZE);
+        drawPic(renderer, y, x, gallery->getImage(PIC_0), CELL_SIZE);
 
         for (int i = -1; i < 2; i++)
         {
@@ -105,15 +105,15 @@ void openEmpty(SDL_Renderer* renderer, level** rectangle, int row, int col, cons
             {
                 if (i != 0 || j != 0)
                 {
-                    if (row + i >= 0 && row + i < ROW_SIZE && col + j >= 0 && col + j < COLUMN_SIZE)
+                    if (y + i >= 0 && y + i < ROW_SIZE && x + j >= 0 && x + j < COLUMN_SIZE)
                     {
-                        if (rectangle[row + i][col + j].state == 0 && rectangle[row + i][col + j].isBomb == 0)
+                        if ((rectangle[y + i][x + j].state == 0 || rectangle[y + i][x + j].state == 2) && rectangle[y + i][x + j].isBoom == 0)
                         {
-                            rectangle[row + i][col + j].state = 1;
+                            rectangle[y + i][x + j].state = 1;
 
-                            openEmpty(renderer, rectangle, row + i, col + j, ROW_SIZE, COLUMN_SIZE, CELL_SIZE);
+                            openEmpty(renderer, rectangle, y + i, x + j, ROW_SIZE, COLUMN_SIZE, CELL_SIZE);
 
-                            print(renderer, rectangle, row + i, col + j, ROW_SIZE, COLUMN_SIZE, CELL_SIZE);
+                            print(renderer, rectangle, y + i, x + j, ROW_SIZE, COLUMN_SIZE, CELL_SIZE);
                         }
                     }
                 }
@@ -122,7 +122,7 @@ void openEmpty(SDL_Renderer* renderer, level** rectangle, int row, int col, cons
     }
 }
 
-void printBomb(SDL_Renderer* renderer, level** rectangle, int y, int x, const int ROW_SIZE, const int COLUMN_SIZE, const int CELL_SIZE)
+void printBoom(SDL_Renderer* renderer, level** rectangle, int y, int x, const int ROW_SIZE, const int COLUMN_SIZE, const int CELL_SIZE)
 {
     if (rectangle[y][x].state == 1)
     {
@@ -130,16 +130,17 @@ void printBomb(SDL_Renderer* renderer, level** rectangle, int y, int x, const in
         {
             for (int j = 0; j < COLUMN_SIZE; j++)
             {
-                if (rectangle[i][j].isBomb == 1)
+                if (rectangle[i][j].isBoom == 1)
                 {
                     rectangle[i][j].state = 1;
 
-                    drawPic(renderer, i, j, gallery->getImage(PIC_BOMB), CELL_SIZE);
+                    drawPic(renderer, i, j, gallery->getImage(PIC_BOOM), CELL_SIZE);
                 }
             }
         }
     }
 }
+
 
 
 
