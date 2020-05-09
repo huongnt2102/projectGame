@@ -14,29 +14,31 @@
 using namespace std;
 
 const int SCREEN_WIDTH = 450;
-const int SCREEN_HEIGHT = 450;
+const int SCREEN_HEIGHT = 600;
 const char WINDOW_TITLE[] = "MINESWEEPER GAME";
 
 const int CELL_SIZE = 30;
 const int ROW_SIZE = 15;
 const int COLUMN_SIZE = 15;
 const int numberOfBoom = 70;
+const int backGround = 75;
 
 const SDL_Color RED = {255, 0, 0};
 
 Gallery* gallery = nullptr;
 
-void playGame(SDL_Renderer* renderer, SDL_Window* window, SDL_Surface* fSurface, SDL_Texture* fTexture, TTF_Font* font, Mix_Chunk *boom);
+void playGame(SDL_Renderer* renderer, SDL_Window* window, TTF_Font* font, Mix_Chunk *boom);
 
 void quitGame(level **rectangle, const int ROW_SIZE, const int COLUMN_SIZE);
 
-bool press(SDL_Window* window, SDL_Renderer* renderer, SDL_Surface* fSurface, SDL_Texture* fTexture, TTF_Font* font, Mix_Chunk *boom);
+bool press(SDL_Window* window, SDL_Renderer* renderer, TTF_Font* font, Mix_Chunk *boom);
 
 int main(int argc, char* argv[])
 {
     srand(time(0));
     SDL_Window* window;
     SDL_Renderer* renderer;
+
     initSDL(window, renderer, SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE);
 
 
@@ -49,26 +51,25 @@ int main(int argc, char* argv[])
     boom = Mix_LoadWAV("boom.wav");
 
     TTF_Font* font = nullptr;
-    SDL_Surface* fSurface = nullptr;
-    SDL_Texture* fTexture = nullptr;
 
-    SDL_SetRenderDrawColor(renderer,0, 255, 0, 255);
+    SDL_SetRenderDrawColor(renderer, 224, 224, 224, 0);
 
     SDL_RenderClear(renderer);
 
     initTTF(renderer);
-    font = TTF_OpenFont("lazy.ttf", 50);
-    rendererTTF(renderer, fSurface, fTexture, font, "  70 BOOM", 60, 100, RED);
+    font = TTF_OpenFont("VeraMoBd.ttf", 50);
+    rendererTTF(renderer, font, "  70 BOOM", 60, 200, RED);
 
     font = TTF_OpenFont("VeraMoBd.ttf", 37);
-    rendererTTF(renderer, fSurface, fTexture, font, " PRESS TAB TO START", 20, 210, RED);
+    rendererTTF(renderer, font, "PRESS TAB TO START", 20, 350, RED);
+
     SDL_RenderPresent(renderer);
 
     gallery = new Gallery(renderer);
 
-    while (press(window, renderer, fSurface, fTexture, font, boom))
+    while (press(window, renderer, font, boom))
     {
-        playGame(renderer, window, fSurface, fTexture, font, boom);
+        playGame(renderer, window, font, boom);
     }
 
     waitUntilKeyPressed();
@@ -82,7 +83,7 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-void playGame(SDL_Renderer* renderer, SDL_Window* window, SDL_Surface* fSurface, SDL_Texture* fTexture, TTF_Font* font, Mix_Chunk *boom)
+void playGame(SDL_Renderer* renderer, SDL_Window* window, TTF_Font* font, Mix_Chunk *boom)
 {
     bool win = false;
 
@@ -104,7 +105,7 @@ void playGame(SDL_Renderer* renderer, SDL_Window* window, SDL_Surface* fSurface,
         }
     }
 
-    drawBlocks(renderer, rectangle, ROW_SIZE, COLUMN_SIZE, CELL_SIZE);
+    drawBlocks(renderer, rectangle, ROW_SIZE, COLUMN_SIZE, CELL_SIZE, backGround);
 
     setRandBoom(rectangle, ROW_SIZE, COLUMN_SIZE, numberOfBoom);
 
@@ -131,7 +132,11 @@ void playGame(SDL_Renderer* renderer, SDL_Window* window, SDL_Surface* fSurface,
     {
         SDL_RenderPresent(renderer);
 
-        int open = 0;
+        drawPic(renderer, -1, 6, gallery->getImage(PIC_NO), CELL_SIZE, backGround);
+
+        int openNumber = 0;
+
+        int openFlag = 0;
 
         for (int i = 0; i < ROW_SIZE; i++)
         {
@@ -139,11 +144,52 @@ void playGame(SDL_Renderer* renderer, SDL_Window* window, SDL_Surface* fSurface,
             {
                 if (rectangle[i][j].state == 1)
                 {
-                    open += 1;
+                    openNumber += 1;
+                }
+                if (rectangle[i][j].state == 2)
+                {
+                    openFlag += 1;
                 }
             }
         }
-        if (open == ROW_SIZE * COLUMN_SIZE - numberOfBoom)
+        int boomLeft = numberOfBoom - openFlag;
+
+        SDL_RenderClear(renderer);
+
+        string write = to_string(boomLeft);
+
+        drawPic(renderer, -1, 6, gallery->getImage(PIC_NO), CELL_SIZE, backGround);
+
+        font = TTF_OpenFont("VeraMoBd.ttf", 40);
+        rendererTTF(renderer, font, write, 10, 10, RED);
+
+        for (int i = 0; i < ROW_SIZE; i++)
+        {
+            for (int j = 0; j < COLUMN_SIZE; j++)
+            {
+                if (rectangle[i][j].state == 0)
+                {
+                    drawPic(renderer, i, j, gallery->getImage(PIC_RECTANGLE), CELL_SIZE, backGround);
+                }
+                else if (rectangle[i][j].state == 1)
+                {
+                    if (countOne(rectangle, i, j, ROW_SIZE, COLUMN_SIZE) != 0)
+                    {
+                        printNumber(renderer, rectangle, i, j, ROW_SIZE, COLUMN_SIZE, CELL_SIZE, backGround);
+                    }
+                    if (countOne(rectangle, i, j, ROW_SIZE, COLUMN_SIZE) == 0)
+                    {
+                        openEmpty(renderer, rectangle, i, j, ROW_SIZE, COLUMN_SIZE, CELL_SIZE, backGround);
+                    }
+                }
+                else
+                {
+                    drawPic(renderer, i, j, gallery->getImage(PIC_FLAG), CELL_SIZE, backGround);
+                }
+            }
+        }
+
+        if (openNumber == ROW_SIZE * COLUMN_SIZE - numberOfBoom)
         {
             win = true;
 
@@ -166,7 +212,7 @@ void playGame(SDL_Renderer* renderer, SDL_Window* window, SDL_Surface* fSurface,
                 if (X < 0 || X > SCREEN_WIDTH || Y < 0 || Y > SCREEN_HEIGHT) continue;
                     int i;
                     int j;
-                    i = Y / CELL_SIZE;
+                    i = (Y - backGround) / CELL_SIZE;
                     j = X / CELL_SIZE;
                 if (mouse.button.button == SDL_BUTTON_RIGHT)
                 {
@@ -175,12 +221,12 @@ void playGame(SDL_Renderer* renderer, SDL_Window* window, SDL_Surface* fSurface,
                     if (rectangle[i][j].state == 2)
                     {
                         rectangle[i][j].state = 0;
-                        drawPic(renderer, i, j, gallery->getImage(PIC_RECTANGLE), CELL_SIZE);
+                        drawPic(renderer, i, j, gallery->getImage(PIC_RECTANGLE), CELL_SIZE, backGround);
                     }
                     else
                     {
                         rectangle[i][j].state = 2;
-                        drawPic(renderer, i, j, gallery->getImage(PIC_FLAG), CELL_SIZE);
+                        drawPic(renderer, i, j, gallery->getImage(PIC_FLAG), CELL_SIZE, backGround);
                     }
                 }
 
@@ -192,7 +238,10 @@ void playGame(SDL_Renderer* renderer, SDL_Window* window, SDL_Surface* fSurface,
 
                         if (rectangle[i][j].isBoom == 1)
                         {
-                            printBoom(renderer, rectangle, i, j, ROW_SIZE, COLUMN_SIZE, CELL_SIZE);
+                            drawPic(renderer, -1, 6, gallery->getImage(PIC_SAD), CELL_SIZE, backGround);
+
+                            printBoom(renderer, rectangle, i, j, ROW_SIZE, COLUMN_SIZE, CELL_SIZE, backGround);
+
                             Mix_PlayChannel(-1, boom, 0);
 
                             win = false;
@@ -204,35 +253,39 @@ void playGame(SDL_Renderer* renderer, SDL_Window* window, SDL_Surface* fSurface,
                         }
                         if (rectangle[i][j].isBoom == 0 && countOne(rectangle, i, j, ROW_SIZE, COLUMN_SIZE) != 0)
                         {
-                            print(renderer, rectangle, i, j, ROW_SIZE, COLUMN_SIZE, CELL_SIZE);
+                            drawPic(renderer, -1, 6, gallery->getImage(PIC_FUNNY), CELL_SIZE, backGround);
+
+                            printNumber(renderer, rectangle, i, j, ROW_SIZE, COLUMN_SIZE, CELL_SIZE, backGround);
                         }
                         if (rectangle[i][j].isBoom == 0 && countOne(rectangle, i, j, ROW_SIZE, COLUMN_SIZE) == 0)
                         {
-                            openEmpty(renderer, rectangle, i, j, ROW_SIZE, COLUMN_SIZE, CELL_SIZE);
+                            drawPic(renderer, -1, 6, gallery->getImage(PIC_FUNNY), CELL_SIZE, backGround);
+
+                            openEmpty(renderer, rectangle, i, j, ROW_SIZE, COLUMN_SIZE, CELL_SIZE, backGround);
                         }
                     }
                 }
             }
-                SDL_RenderPresent(renderer);
+            SDL_RenderPresent(renderer);
         }
     }
     if (win == true)
     {
         font = TTF_OpenFont("VeraMoBd.ttf", 55);
-        rendererTTF(renderer, fSurface, fTexture, font, "  YOU WIN", 20, 100, RED);
+        rendererTTF(renderer, font, "  YOU WIN", 20, 0, RED);
 
-        font = TTF_OpenFont("VeraMoBd.ttf", 31);
-        rendererTTF(renderer, fSurface, fTexture, font, " press TAB to play", 1, 250, RED);
+        font = TTF_OpenFont("VeraMoBd.ttf", 30);
+        rendererTTF(renderer, font, " press TAB to play", 10, 550, RED);
         SDL_RenderPresent(renderer);
     }
 
     else
     {
         font = TTF_OpenFont("VeraMoBd.ttf", 55);
-        rendererTTF(renderer, fSurface, fTexture, font, "  YOU LOSE", 20, 100, RED);
+        rendererTTF(renderer, font, "  YOU LOSE", 20, 0, RED);
 
-        font = TTF_OpenFont("VeraMoBd.ttf", 31);
-        rendererTTF(renderer, fSurface, fTexture, font, "press TAB to play again", 1, 250, RED),
+        font = TTF_OpenFont("VeraMoBd.ttf", 30);
+        rendererTTF(renderer, font, "press TAB to play again", 10, 550, RED),
         SDL_RenderPresent(renderer);
     }
 }
@@ -246,7 +299,7 @@ void quitGame(level **rectangle, const int ROW_SIZE, const int COLUMN_SIZE)
     delete[] rectangle;
 }
 
-bool press(SDL_Window* window, SDL_Renderer* renderer, SDL_Surface* fSurface, SDL_Texture* fTexture, TTF_Font* font, Mix_Chunk *boom)
+bool press(SDL_Window* window, SDL_Renderer* renderer, TTF_Font* font, Mix_Chunk *boom)
 {
         bool menu = false;
 

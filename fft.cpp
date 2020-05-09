@@ -12,12 +12,11 @@ void initTTF(SDL_Renderer *renderer)
 	}
 }
 
-
-void rendererTTF(SDL_Renderer* renderer, SDL_Surface* fSurface, SDL_Texture* fTexture,TTF_Font* font, string text, int left, int top, const SDL_Color RED)
+void rendererTTF(SDL_Renderer* renderer, TTF_Font* font, string text, int left, int top, const SDL_Color RED)
 {
-    fSurface = TTF_RenderText_Solid(font, text.c_str(), RED);
+    SDL_Surface* fSurface = TTF_RenderText_Solid(font, text.c_str(), RED);
 
-    fTexture = SDL_CreateTextureFromSurface(renderer, fSurface);
+    SDL_Texture* fTexture = SDL_CreateTextureFromSurface(renderer, fSurface);
 
     SDL_Rect srcRest;
     SDL_Rect desRect;

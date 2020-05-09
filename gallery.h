@@ -18,6 +18,9 @@ enum PictureID {
     PIC_6,
     PIC_7,
     PIC_8,
+    PIC_SAD,
+    PIC_FUNNY,
+    PIC_NO,
     PIC_COUNT
 };
 

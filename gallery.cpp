@@ -57,6 +57,12 @@ void Gallery::loadGamePictures()
     pictures[PIC_7] = loadTexture("IMAGE\\7.png");
 
     pictures[PIC_8] = loadTexture("IMAGE\\8.png");
+
+    pictures[PIC_NO] = loadTexture("IMAGE\\no.png");
+
+    pictures[PIC_SAD] = loadTexture("IMAGE\\sad.png");
+
+    pictures[PIC_FUNNY] = loadTexture("IMAGE\\funny.png");
 }
 
 
